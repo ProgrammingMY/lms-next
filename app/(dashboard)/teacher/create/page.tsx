@@ -5,7 +5,7 @@ import * as z from 'zod';
 import axios from 'axios';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 import {
     Form,
@@ -18,6 +18,8 @@ import {
 } from "@/components/ui/form";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import Link from 'next/link';
+import { useToast } from '@/components/hooks/use-toast';
 
 const formSchema = z.object({
     title: z.string().min(1, {
@@ -28,17 +30,33 @@ const formSchema = z.object({
 
 
 function CreatePage() {
+    const { toast } = useToast();
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             title: "",
         },
     });
+    const router = useRouter();
 
     const { isSubmitting, isValid } = form.formState;
 
-    const onSubmit = (values: z.infer<typeof formSchema>) => {
-        console.log(values);
+    const onSubmit = async (values: z.infer<typeof formSchema>) => {
+        try {
+            const response = await axios.post('/api/courses', values);
+            router.push(`/teacher/courses/${response.data.id}`);
+            toast({
+                title: "Success",
+                description: "Course created successfully.",
+                variant: "default",
+            });
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: "Something went wrong.",
+                variant: "destructive",
+            });
+        }
     }
 
     return (
@@ -72,7 +90,14 @@ function CreatePage() {
                             )}
                         />
                         <div className='flex items-center gap-x-2'>
-
+                            <Link href="/">
+                                <Button variant='ghost' type='button' className='text-sm'>
+                                    Cancel
+                                </Button>
+                            </Link>
+                            <Button type='submit' disabled={!isValid || isSubmitting}>
+                                Create Course
+                            </Button>
                         </div>
 
                     </form>
