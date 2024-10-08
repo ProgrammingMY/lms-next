@@ -1,10 +1,11 @@
 import { db } from "@/lib/db";
 import { createClient } from "@/utils/supabase/server";
-import { SupabaseClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 
-export async function POST(req: Request) {
-  const { title } = await req.json();
+export async function PATCH(
+  req: Request,
+  { params }: { params: { courseId: string } }
+) {
   try {
     const supabase = createClient();
     const {
@@ -20,15 +21,20 @@ export async function POST(req: Request) {
       });
     }
 
-    const course = await db.course.create({
-      data: {
-        title,
+    const { courseId } = params;
+    const values = await req.json();
+
+    const course = await db.course.update({
+      where: {
+        id: courseId,
         userId: user.id,
       },
+      data: { ...values },
     });
+
     return NextResponse.json(course);
   } catch (error) {
-    console.log("[COURSES", error);
+    console.log("[COURSE ID]", error);
     return new NextResponse(JSON.stringify(error), {
       status: 500,
       headers: {

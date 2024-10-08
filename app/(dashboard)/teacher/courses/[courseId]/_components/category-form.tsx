@@ -19,14 +19,24 @@ import { Pencil } from 'lucide-react';
 import { useToast } from '@/components/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { CourseFormProps } from '@/lib/types';
+import { Category, Course } from '@prisma/client';
+import { cn } from '@/lib/utils';
+import { Combobox } from '@/components/ui/combobox';
+
+interface CategoryFormProps {
+    initialData: Course;
+    courseId: string;
+    options: {
+        label: string;
+        value: string;
+    }[]
+}
 
 const formSchema = z.object({
-    title: z.string().min(1, {
-        message: "Title is required",
-    }),
+    categoryId: z.string().min(1),
 });
 
-function TitleForm({ initialData, courseId }: CourseFormProps) {
+function CategoryForm({ initialData, courseId, options }: CategoryFormProps) {
     const [isEditting, setIsEditting] = useState(false);
     const { toast } = useToast();
     const router = useRouter();
@@ -37,7 +47,9 @@ function TitleForm({ initialData, courseId }: CourseFormProps) {
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        defaultValues: initialData,
+        defaultValues: {
+            categoryId: initialData?.categoryId || "",
+        },
     });
 
     const { isSubmitting, isValid } = form.formState;
@@ -48,7 +60,7 @@ function TitleForm({ initialData, courseId }: CourseFormProps) {
             await axios.patch(`/api/courses/${courseId}`, values);
             toast({
                 title: "Success",
-                description: "Course title updated successfully.",
+                description: "Course category updated successfully.",
                 variant: "default",
             });
             setIsEditting(false);
@@ -62,37 +74,38 @@ function TitleForm({ initialData, courseId }: CourseFormProps) {
         }
     }
 
+    const selectedOption = options.find((option) => option.value === initialData.categoryId);
+
 
     return (
         <div className='mt-6 border bg-slate-100 rounded-md p-4'>
             <div className='font-medium flex items-center justify-between'>
-                Course Title
+                Course Category
                 <Button onClick={toggleEditting} variant='ghost' type='button'>
                     {isEditting ? (
                         <>Cancel</>
                     ) : <>
                         <Pencil className='h-4 w-4 mr-2' />
-                        Edit Title
+                        Edit Category
                     </>
                     }
                 </Button>
             </div>
             {!isEditting ? (
-                <div className='text-sm mt-2'>
-                    {initialData.title}
-                </div>
+                <p className={cn("text-sm mt-2", !initialData.categoryId && "text-slate-500 italic")}>
+                    {selectedOption?.label || "No category"}
+                </p>
             ) : (
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4 mt-4'>
                         <FormField
                             control={form.control}
-                            name='title'
+                            name='categoryId'
                             render={({ field }) => (
                                 <FormItem>
                                     <FormControl>
-                                        <Input
-                                            disabled={!isEditting}
-                                            placeholder='e.g. Introduction to Computer Science'
+                                        <Combobox
+                                            options={options}
                                             {...field}
                                         />
                                     </FormControl>
@@ -116,4 +129,4 @@ function TitleForm({ initialData, courseId }: CourseFormProps) {
     )
 }
 
-export default TitleForm
+export default CategoryForm

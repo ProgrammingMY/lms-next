@@ -19,14 +19,25 @@ import { Pencil } from 'lucide-react';
 import { useToast } from '@/components/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { CourseFormProps } from '@/lib/types';
+import { cn } from '@/lib/utils';
+import { Textarea } from '@/components/ui/textarea';
+
+interface TitleFormProps {
+    initialData: {
+        description: string | null;
+    };
+    courseId: string;
+}
+
 
 const formSchema = z.object({
-    title: z.string().min(1, {
-        message: "Title is required",
+    description: z.string().min(1, {
+        message: "Description is required",
     }),
 });
 
-function TitleForm({ initialData, courseId }: CourseFormProps) {
+
+export const DescriptionForm = ({ initialData, courseId }: TitleFormProps) => {
     const [isEditting, setIsEditting] = useState(false);
     const { toast } = useToast();
     const router = useRouter();
@@ -37,7 +48,7 @@ function TitleForm({ initialData, courseId }: CourseFormProps) {
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        defaultValues: initialData,
+        defaultValues: { description: initialData?.description || "" },
     });
 
     const { isSubmitting, isValid } = form.formState;
@@ -48,7 +59,7 @@ function TitleForm({ initialData, courseId }: CourseFormProps) {
             await axios.patch(`/api/courses/${courseId}`, values);
             toast({
                 title: "Success",
-                description: "Course title updated successfully.",
+                description: "Course description updated successfully.",
                 variant: "default",
             });
             setIsEditting(false);
@@ -64,35 +75,35 @@ function TitleForm({ initialData, courseId }: CourseFormProps) {
 
 
     return (
-        <div className='mt-6 border bg-slate-100 rounded-md p-4'>
+        <div className='mt-6 border bg-slate-100 rounded-md p-4' >
             <div className='font-medium flex items-center justify-between'>
-                Course Title
+                Course Description
                 <Button onClick={toggleEditting} variant='ghost' type='button'>
                     {isEditting ? (
                         <>Cancel</>
                     ) : <>
                         <Pencil className='h-4 w-4 mr-2' />
-                        Edit Title
+                        Edit Description
                     </>
                     }
                 </Button>
             </div>
             {!isEditting ? (
-                <div className='text-sm mt-2'>
-                    {initialData.title}
-                </div>
+                <p className={cn("text-sm mt-2", !initialData.description && "text-slate-500 italic")}>
+                    {initialData.description || "No description"}
+                </p>
             ) : (
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4 mt-4'>
                         <FormField
                             control={form.control}
-                            name='title'
+                            name='description'
                             render={({ field }) => (
                                 <FormItem>
                                     <FormControl>
-                                        <Input
+                                        <Textarea
                                             disabled={!isEditting}
-                                            placeholder='e.g. Introduction to Computer Science'
+                                            placeholder='e.g. This course is about...'
                                             {...field}
                                         />
                                     </FormControl>
@@ -112,8 +123,6 @@ function TitleForm({ initialData, courseId }: CourseFormProps) {
                     </form>
                 </Form>
             )}
-        </div>
+        </div >
     )
 }
-
-export default TitleForm

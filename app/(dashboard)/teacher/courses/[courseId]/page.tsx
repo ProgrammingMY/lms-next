@@ -1,11 +1,14 @@
 import { IconBadge } from '@/components/icon-badge';
 import { db } from '@/lib/db'
 import { createClient } from '@/utils/supabase/server'
-import { LayoutDashboard } from 'lucide-react';
+import { CircleDollarSign, LayoutDashboard, ListCheck } from 'lucide-react';
 import { redirect } from 'next/navigation';
 import React from 'react'
 
 import TitleForm from './_components/title-form';
+import { DescriptionForm } from './_components/description-form';
+import { ImageForm } from './_components/image-form';
+import CategoryForm from './_components/category-form';
 
 async function CourseIdPage(
   { params }: { params: { courseId: string } }
@@ -23,6 +26,12 @@ async function CourseIdPage(
     where: {
       id: params.courseId,
     },
+  });
+
+  const categories = await db.category.findMany({
+    orderBy: {
+      name: "asc",
+    }
   });
 
   if (!course) {
@@ -61,13 +70,53 @@ async function CourseIdPage(
             <h2 className='text-xl'>Customize your course</h2>
 
           </div>
-          <TitleForm 
+          <TitleForm
             initialData={course}
             courseId={course.id}
           />
+          <DescriptionForm
+            initialData={course}
+            courseId={course.id}
+          />
+          <ImageForm
+            initialData={course}
+            courseId={course.id}
+          />
+          <CategoryForm
+            initialData={course}
+            courseId={course.id}
+            options={categories.map((category) => ({
+              label: category.name,
+              value: category.id,
+            }))}
+          />
+        </div>
+        <div className='space-y-6'>
+          <div>
+            <div className='flex items-center gap-x-2'>
+              <IconBadge icon={ListCheck} />
+              <h2 className='text-xl'>
+                Course chapters
+              </h2>
+            </div>
+            <div>
+              TODO: Chapters
+            </div>
+          </div>
+
+          <div>
+            <div className='flex items-center gap-x-2'>
+              <IconBadge icon={CircleDollarSign} />
+              <h2 className='text-xl'>
+                Sell your course
+              </h2>
+
+            </div>
+          </div>
+
         </div>
       </div>
-      </div>
+    </div>
   )
 }
 
