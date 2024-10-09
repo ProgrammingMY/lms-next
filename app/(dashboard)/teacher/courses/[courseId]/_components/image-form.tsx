@@ -15,13 +15,16 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 import React, { useState } from 'react'
-import { ImageIcon, Pencil } from 'lucide-react';
+import { ImageIcon, Pencil, PlusCircle } from 'lucide-react';
 import { useToast } from '@/components/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { CourseFormProps } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Textarea } from '@/components/ui/textarea';
 import Image from 'next/image';
+import { SubmitButton } from './submit-button';
+import { uploadFileAction } from '../actions/actions';
+import { useFormState } from 'react-dom';
 
 
 const formSchema = z.object({
@@ -30,9 +33,15 @@ const formSchema = z.object({
     }),
 });
 
+const initialState = {
+    message: "",
+    status: "",
+}
+
 
 export const ImageForm = ({ initialData, courseId }: CourseFormProps) => {
     const [isEditting, setIsEditting] = useState(false);
+    const [state, uploadFormAction] = useFormState(uploadFileAction, initialState)
     const { toast } = useToast();
     const router = useRouter();
 
@@ -70,7 +79,7 @@ export const ImageForm = ({ initialData, courseId }: CourseFormProps) => {
                     {isEditting ? (
                         <>Cancel</>
                     ) : <>
-                        <Pencil className='h-4 w-4 mr-2' />
+                        <PlusCircle className='h-4 w-4 mr-2' />
                         Upload image
                     </>
                     }
@@ -93,7 +102,20 @@ export const ImageForm = ({ initialData, courseId }: CourseFormProps) => {
                 )
             ) : (
                 <div>
-
+                    <form action={uploadFormAction}>
+                        <input type="file" id="file" name="file" accept="images/*" />
+                        <SubmitButton />
+                    </form>
+                    {
+                        state?.status && state.status === "error" && (
+                            <p className='text-sm text-red-500'>{state.message}</p>
+                        )
+                    }
+                    {
+                        state?.status && state.status === "success" && (
+                            <p className='text-sm text-green-500'>{state.message}</p>
+                        )
+                    }
                 </div>
             )}
         </div >
