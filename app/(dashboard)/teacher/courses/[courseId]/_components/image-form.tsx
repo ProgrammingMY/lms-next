@@ -23,7 +23,7 @@ import { cn } from '@/lib/utils';
 import { Textarea } from '@/components/ui/textarea';
 import Image from 'next/image';
 import { SubmitButton } from './submit-button';
-import { uploadFileAction } from '../actions/actions';
+import { uploadFileAction } from '../_actions/actions';
 import { useFormState } from 'react-dom';
 
 
@@ -52,7 +52,6 @@ export const ImageForm = ({ initialData, courseId }: CourseFormProps) => {
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         try {
-            console.log(values);
             await axios.patch(`/api/courses/${courseId}`, values);
             toast({
                 title: "Success",

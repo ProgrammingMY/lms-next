@@ -73,7 +73,6 @@ export const AttachmentForm = ({ initialData, courseId }: AttachmentFormProps) =
                 description: "Attachment deleted successfully.",
                 variant: "default",
             });
-            setdeletingId(null);
             router.refresh();
         } catch (error) {
             toast({
