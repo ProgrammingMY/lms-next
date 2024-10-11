@@ -13,9 +13,10 @@ import {
 } from "@/components/ui/form";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import MuxPlayer from '@mux/mux-player-react'
 
 import React, { useState } from 'react'
-import { ImageIcon, Pencil, PlusCircle } from 'lucide-react';
+import { ImageIcon, Pencil, PlusCircle, Video } from 'lucide-react';
 import { useToast } from '@/components/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { CourseFormProps } from '@/lib/types';
@@ -25,12 +26,17 @@ import Image from 'next/image';
 import { SubmitButton } from '@/components/upload-component/submit-button';
 import { uploadFileAction } from '@/components/upload-component/actions';
 import { useFormState } from 'react-dom';
+import { Chapter, MuxData } from '@prisma/client';
+
+interface ChapterVideoProps {
+    initialData: Chapter & { muxData?: MuxData | null };
+    courseId: string;
+    chapterId: string;
+}
 
 
 const formSchema = z.object({
-    imageUrl: z.string().min(1, {
-        message: "Image is required",
-    }),
+    videoUrl: z.string().min(1),
 });
 
 const initialState = {
@@ -39,7 +45,7 @@ const initialState = {
 }
 
 
-export const ImageForm = ({ initialData, courseId }: CourseFormProps) => {
+export const ChapterVideoForm = ({ initialData, courseId, chapterId }: ChapterVideoProps) => {
     const [isEditting, setIsEditting] = useState(false);
     const [state, uploadFormAction] = useFormState(uploadFileAction, initialState)
     const { toast } = useToast();
@@ -52,10 +58,10 @@ export const ImageForm = ({ initialData, courseId }: CourseFormProps) => {
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         try {
-            await axios.patch(`/api/courses/${courseId}`, values);
+            await axios.patch(`/api/courses/${courseId}/chapters/${chapterId}`, values);
             toast({
                 title: "Success",
-                description: "Image uploaded successfully.",
+                description: "Chapter updated successfully.",
                 variant: "default",
             });
             setIsEditting(false);
@@ -73,29 +79,36 @@ export const ImageForm = ({ initialData, courseId }: CourseFormProps) => {
     return (
         <div className='mt-6 border bg-slate-100 rounded-md p-4' >
             <div className='font-medium flex items-center justify-between'>
-                Course Image
+                Course video
                 <Button onClick={toggleEditting} variant='ghost' type='button'>
-                    {isEditting ? (
+                    {isEditting && (
                         <>Cancel</>
-                    ) : <>
-                        <PlusCircle className='h-4 w-4 mr-2' />
-                        Upload image
-                    </>
-                    }
+                    )}
+                    {!isEditting && !initialData.videoUrl && (
+                        <>
+
+                            <PlusCircle className='h-4 w-4 mr-2' />
+                            Upload video
+
+                        </>
+                    )}
+                    {!isEditting && initialData.videoUrl && (
+                        <>
+                            <Pencil className='h-4 w-4 mr-2' />
+                            Edit video
+                        </>
+                    )}
                 </Button>
             </div>
             {!isEditting ? (
-                !initialData.imageUrl ? (
+                !initialData.videoUrl ? (
                     <div className='flex items-center justify-center h-60 bg-slate-200 rounded-md'>
-                        <ImageIcon className='h-10 w-10 text-slate-500' />
+                        <Video className='h-10 w-10 text-slate-500' />
                     </div>
                 ) : (
                     <div className='relative aspect-video mt-2'>
-                        <Image
-                            alt="course image"
-                            src={initialData.imageUrl}
-                            fill
-                            className='rounded-md object-cover'
+                        <MuxPlayer
+                            playbackId={initialData.muxData?.playbackId || ""}
                         />
                     </div>
                 )
@@ -115,6 +128,11 @@ export const ImageForm = ({ initialData, courseId }: CourseFormProps) => {
                             <p className='text-sm text-green-500'>{state.message}</p>
                         )
                     }
+                </div>
+            )}
+            {initialData.videoUrl && !isEditting && (
+                <div className='text-xs text-muted-foreground mt-2'>
+                    Videos can take a few minutes to process. Refresh the page if video does not appear.
                 </div>
             )}
         </div >
