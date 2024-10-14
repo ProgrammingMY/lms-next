@@ -24,12 +24,12 @@ import { Textarea } from '@/components/ui/textarea';
 import Image from 'next/image';
 import { Attachment, Course } from '@prisma/client';
 import { MyDropzone } from '@/components/upload-component/dropzone';
+import Link from 'next/link';
 
 interface AttachmentFormProps {
     initialData: Course & { attachments: Attachment[] };
     courseId: string;
 }
-
 
 const formSchema = z.object({
     url: z.string().min(1),
@@ -110,7 +110,9 @@ export const AttachmentForm = ({ initialData, courseId }: AttachmentFormProps) =
                         <div className='space-y-2'>
                             {initialData.attachments.map((attachment) => (
                                 <div key={attachment.id} className='flex items-center p-3 w-full bg-sky-100 border text-sky-700 rounded-md'>
+
                                     <File className='h-4 w-4 mr-2 flex-shrink-0' />
+
                                     <p className='text-xs line-clamp-1'>{attachment.fileName}</p>
                                     {deletingId === attachment.id && (
                                         <div>
@@ -131,7 +133,6 @@ export const AttachmentForm = ({ initialData, courseId }: AttachmentFormProps) =
             )
                 : <>
                     <MyDropzone onUpload={(url) => {
-                        console.log(url);
                         if (url) {
                             onSubmit({ url: url })
                         }

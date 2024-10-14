@@ -1,10 +1,6 @@
 "use server";
 
-// upload file to S3
-
 import { createClient } from "@/utils/supabase/server";
-import { Key } from "lucide-react";
-
 import {
   PutObjectCommand,
   PutObjectCommandInput,

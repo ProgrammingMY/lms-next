@@ -47,7 +47,7 @@ export async function POST(
     const attachment = await db.attachment.create({
       data: {
         fileUrl: url,
-        fileName: url.split("/").pop(),
+        fileName: url.split("/").pop().split("?")[0],
         courseId: params.courseId,
       },
     });

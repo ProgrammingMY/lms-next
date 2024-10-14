@@ -17,19 +17,6 @@ export const MyDropzone = ({ onUpload }: DropzoneProps) => {
     const [files, setFiles] = useState<File[]>([]);
     const { toast } = useToast();
 
-    const updateDb = async () => {
-        try {
-
-
-        } catch {
-            toast({
-                title: "Error",
-                description: "Error occured when trying to update database",
-                variant: "destructive",
-            })
-        }
-    }
-
     const onDrop = useCallback((acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
         if (acceptedFiles.length > 0) {
             setFiles((previousFiles) => [
@@ -102,10 +89,10 @@ export const MyDropzone = ({ onUpload }: DropzoneProps) => {
                     },
                     body: file,
                 });
-
             }));
 
             res.forEach((response) => {
+                console.log(response);
                 if (!response.ok) {
                     toast({
                         title: "Error",
@@ -119,9 +106,7 @@ export const MyDropzone = ({ onUpload }: DropzoneProps) => {
                         description: "File uploaded successfully",
                         variant: "default",
                     });
-
-                    
-
+                    onUpload(response.url);
                 };
                 setFiles([]);
             });
