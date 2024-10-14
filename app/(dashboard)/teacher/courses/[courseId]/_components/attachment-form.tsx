@@ -24,7 +24,6 @@ import { Textarea } from '@/components/ui/textarea';
 import Image from 'next/image';
 import { Attachment, Course } from '@prisma/client';
 import { MyDropzone } from '@/components/upload-component/dropzone';
-import Link from 'next/link';
 
 interface AttachmentFormProps {
     initialData: Course & { attachments: Attachment[] };
