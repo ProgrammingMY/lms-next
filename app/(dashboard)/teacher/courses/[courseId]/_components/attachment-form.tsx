@@ -23,6 +23,7 @@ import { cn } from '@/lib/utils';
 import { Textarea } from '@/components/ui/textarea';
 import Image from 'next/image';
 import { Attachment, Course } from '@prisma/client';
+import { MyDropzone } from '@/components/upload-component/dropzone';
 
 interface AttachmentFormProps {
     initialData: Course & { attachments: Attachment[] };
@@ -129,7 +130,12 @@ export const AttachmentForm = ({ initialData, courseId }: AttachmentFormProps) =
                 </>
             )
                 : <>
-                    {/* insert upload file ui here */}
+                    <MyDropzone onUpload={(url) => {
+                        console.log(url);
+                        if (url) {
+                            onSubmit({ url: url })
+                        }
+                    }} />
                 </>
             }
         </div >

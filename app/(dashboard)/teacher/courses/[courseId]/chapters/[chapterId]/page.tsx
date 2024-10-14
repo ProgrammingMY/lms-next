@@ -136,8 +136,7 @@ const ChapterIdPage = async (
                         <ChapterVideoForm
                             initialData={chapter}
                             courseId={params.courseId}
-                            chapterId={params.chapterId}
-                        />
+                            chapterId={params.chapterId} />
                     </div>
 
                 </div>

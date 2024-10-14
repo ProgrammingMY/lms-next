@@ -42,6 +42,8 @@ export async function POST(
 
     const { url } = await req.json();
 
+    console.log(url);
+
     const attachment = await db.attachment.create({
       data: {
         fileUrl: url,
