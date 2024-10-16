@@ -10,6 +10,8 @@ import { useRouter } from 'next/navigation';
 import { CourseFormProps } from '@/lib/types';
 import Image from 'next/image';
 import { DialogUploader } from '@/components/upload-component/dialog-uploader';
+import { Dialog } from '@/components/ui/dialog';
+import { DialogTrigger } from '@radix-ui/react-dialog';
 
 
 const formSchema = z.object({
@@ -42,7 +44,6 @@ export const ImageForm = ({ initialData, courseId }: CourseFormProps) => {
                 description: "Image uploaded successfully.",
                 variant: "default",
             });
-            setIsEditting(false);
             router.refresh();
         } catch (error) {
             toast({
@@ -50,6 +51,8 @@ export const ImageForm = ({ initialData, courseId }: CourseFormProps) => {
                 description: "Something went wrong.",
                 variant: "destructive",
             });
+        } finally {
+            setIsEditting(false);
         }
     }
 
@@ -58,15 +61,27 @@ export const ImageForm = ({ initialData, courseId }: CourseFormProps) => {
         <div className='mt-6 border bg-slate-100 rounded-md p-4' >
             <div className='font-medium flex items-center justify-between'>
                 Course Image
-                <Button onClick={toggleEditting} variant='ghost' type='button'>
-                    {isEditting ? (
-                        <>Cancel</>
-                    ) : <>
-                        <PlusCircle className='h-4 w-4 mr-2' />
-                        Upload image
-                    </>
-                    }
-                </Button>
+                <Dialog open={isEditting} onOpenChange={setIsEditting}>
+                    <DialogTrigger asChild>
+                        <Button onClick={toggleEditting} variant='ghost' type='button'>
+                            <PlusCircle className='h-4 w-4 mr-2' />
+                            Upload image
+                        </Button>
+                    </DialogTrigger>
+                    <DialogUploader
+                        multiple={false}
+                        maxFileCount={1}
+                        maxSize={1024 * 1024 * 4}
+                        accept={{
+                            "image/*": [],
+                        }}
+                        onGetUrl={(responseData) => {
+                            if (responseData) {
+                                onSubmit({ imageUrl: responseData.fileUrl })
+                            }
+                        }}
+                    />
+                </Dialog>
             </div>
             {!isEditting ? (
                 !initialData.imageUrl ? (
@@ -85,19 +100,7 @@ export const ImageForm = ({ initialData, courseId }: CourseFormProps) => {
                 )
             ) : (
                 <div>
-                    <DialogUploader
-                        multiple={false}
-                        maxFileCount={1}
-                        maxSize={1024 * 1024 * 4}
-                        accept={{
-                            "image/*": [],
-                        }}
-                        onGetUrl={(responseData) => {
-                            if (responseData) {
-                                onSubmit({ imageUrl: responseData.fileUrl })
-                            }
-                        }}
-                    />
+
                 </div>
             )}
         </div >

@@ -9,6 +9,7 @@ import { useToast } from '@/components/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { Attachment, Course } from '@prisma/client';
 import { DialogUploader } from '@/components/upload-component/dialog-uploader';
+import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 
 interface AttachmentFormProps {
     initialData: Course & { attachments: Attachment[] };
@@ -76,17 +77,33 @@ export const AttachmentForm = ({ initialData, courseId }: AttachmentFormProps) =
         <div className='mt-6 border bg-slate-100 rounded-md p-4' >
             <div className='font-medium flex items-center justify-between'>
                 Course Attachments
-                <Button onClick={toggleEditting} variant='ghost' type='button'>
-                    {isEditting ? (
-                        <>Cancel</>
-                    ) : <>
-                        <PlusCircle className='h-4 w-4 mr-2' />
-                        Add a file
-                    </>
-                    }
-                </Button>
+                <Dialog open={isEditting} onOpenChange={setIsEditting}>
+                    <DialogTrigger asChild>
+                        <Button onClick={toggleEditting} variant='ghost' type='button'>
+                            <PlusCircle className='h-4 w-4 mr-2' />
+                            Add a file
+                        </Button>
+                    </DialogTrigger>
+                    <DialogUploader
+                        multiple={true}
+                        maxFileCount={5}
+                        maxSize={1024 * 1024 * 10}
+                        accept={{
+                            "image/*": [],
+                            "pdf/*": [],
+                            "text/*": [],
+                            "video/*": [],
+                            "audio/*": [],
+                        }}
+                        onGetUrl={(responseData) => {
+                            if (responseData) {
+                                onSubmit({ url: responseData.fileUrl, name: responseData.fileName })
+                            }
+                        }}
+                    />
+                </Dialog>
             </div>
-            {!isEditting ? (
+            {!isEditting && (
                 <>
                     {initialData.attachments.length === 0 && (
                         <p className='text-sm mt-2 text-slate-500 italic'>No attachments</p>
@@ -113,27 +130,7 @@ export const AttachmentForm = ({ initialData, courseId }: AttachmentFormProps) =
                         </div>
                     )}
                 </>
-            )
-                : <>
-                    <DialogUploader
-                        multiple={true}
-                        maxFileCount={5}
-                        maxSize={1024 * 1024 * 10}
-                        accept={{
-                            "image/*": [],
-                            "pdf/*": [],
-                            "text/*": [],
-                            "video/*": [],
-                            "audio/*": [],
-                        }}
-                        onGetUrl={(responseData) => {
-                            if (responseData) {
-                                onSubmit({ url: responseData.fileUrl, name: responseData.fileName })
-                            }
-                        }}
-                    />
-                </>
-            }
+            )}
         </div >
     )
 }
