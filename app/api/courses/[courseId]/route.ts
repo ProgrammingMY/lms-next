@@ -24,6 +24,10 @@ export async function PATCH(
     const { courseId } = params;
     const values = await req.json();
 
+    if (values.imageUrl) {
+      values.imageUrl = values.imageUrl.split("/").pop().split("?")[0];
+    }
+
     const course = await db.course.update({
       where: {
         id: courseId,

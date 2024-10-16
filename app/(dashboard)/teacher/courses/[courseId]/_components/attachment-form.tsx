@@ -1,29 +1,14 @@
 "use client";
 import * as z from 'zod';
 import axios from 'axios';
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormMessage
-} from "@/components/ui/form";
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 
 import React, { useState } from 'react'
-import { File, ImageIcon, Loader2, Pencil, PlusCircle, X } from 'lucide-react';
+import { File, Loader2, PlusCircle, X } from 'lucide-react';
 import { useToast } from '@/components/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import { CourseFormProps } from '@/lib/types';
-import { cn } from '@/lib/utils';
-import { Textarea } from '@/components/ui/textarea';
-import Image from 'next/image';
 import { Attachment, Course } from '@prisma/client';
-import { MyDropzone } from '@/components/upload-component/dropzone';
+import { DialogUploader } from '@/components/upload-component/dialog-uploader';
 
 interface AttachmentFormProps {
     initialData: Course & { attachments: Attachment[] };
@@ -32,6 +17,7 @@ interface AttachmentFormProps {
 
 const formSchema = z.object({
     url: z.string().min(1),
+    name: z.string().min(1),
 });
 
 
@@ -109,9 +95,7 @@ export const AttachmentForm = ({ initialData, courseId }: AttachmentFormProps) =
                         <div className='space-y-2'>
                             {initialData.attachments.map((attachment) => (
                                 <div key={attachment.id} className='flex items-center p-3 w-full bg-sky-100 border text-sky-700 rounded-md'>
-
                                     <File className='h-4 w-4 mr-2 flex-shrink-0' />
-
                                     <p className='text-xs line-clamp-1'>{attachment.fileName}</p>
                                     {deletingId === attachment.id && (
                                         <div>
@@ -131,11 +115,23 @@ export const AttachmentForm = ({ initialData, courseId }: AttachmentFormProps) =
                 </>
             )
                 : <>
-                    <MyDropzone onUpload={(url) => {
-                        if (url) {
-                            onSubmit({ url: url })
-                        }
-                    }} />
+                    <DialogUploader
+                        multiple={true}
+                        maxFileCount={5}
+                        maxSize={1024 * 1024 * 10}
+                        accept={{
+                            "image/*": [],
+                            "pdf/*": [],
+                            "text/*": [],
+                            "video/*": [],
+                            "audio/*": [],
+                        }}
+                        onGetUrl={(responseData) => {
+                            if (responseData) {
+                                onSubmit({ url: responseData.fileUrl, name: responseData.fileName })
+                            }
+                        }}
+                    />
                 </>
             }
         </div >

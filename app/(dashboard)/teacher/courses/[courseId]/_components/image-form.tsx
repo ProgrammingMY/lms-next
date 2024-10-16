@@ -1,30 +1,15 @@
 "use client";
 import * as z from 'zod';
 import axios from 'axios';
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormMessage
-} from "@/components/ui/form";
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 
 import React, { useState } from 'react'
-import { ImageIcon, Pencil, PlusCircle } from 'lucide-react';
+import { ImageIcon, PlusCircle } from 'lucide-react';
 import { useToast } from '@/components/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { CourseFormProps } from '@/lib/types';
-import { cn } from '@/lib/utils';
-import { Textarea } from '@/components/ui/textarea';
 import Image from 'next/image';
-import { SubmitButton } from '@/components/upload-component/submit-button';
-import { uploadFileAction } from '@/components/upload-component/actions';
-import { useFormState } from 'react-dom';
+import { DialogUploader } from '@/components/upload-component/dialog-uploader';
 
 
 const formSchema = z.object({
@@ -41,7 +26,6 @@ const initialState = {
 
 export const ImageForm = ({ initialData, courseId }: CourseFormProps) => {
     const [isEditting, setIsEditting] = useState(false);
-    const [state, uploadFormAction] = useFormState(uploadFileAction, initialState)
     const { toast } = useToast();
     const router = useRouter();
 
@@ -93,7 +77,7 @@ export const ImageForm = ({ initialData, courseId }: CourseFormProps) => {
                     <div className='relative aspect-video mt-2'>
                         <Image
                             alt="course image"
-                            src={initialData.imageUrl}
+                            src={`https://bucket.programmingmy.com/${initialData.imageUrl}`}
                             fill
                             className='rounded-md object-cover'
                         />
@@ -101,20 +85,19 @@ export const ImageForm = ({ initialData, courseId }: CourseFormProps) => {
                 )
             ) : (
                 <div>
-                    <form action={uploadFormAction}>
-                        <input type="file" id="file" name="file" accept="images/*" />
-                        <SubmitButton />
-                    </form>
-                    {
-                        state?.status && state.status === "error" && (
-                            <p className='text-sm text-red-500'>{state.message}</p>
-                        )
-                    }
-                    {
-                        state?.status && state.status === "success" && (
-                            <p className='text-sm text-green-500'>{state.message}</p>
-                        )
-                    }
+                    <DialogUploader
+                        multiple={false}
+                        maxFileCount={1}
+                        maxSize={1024 * 1024 * 4}
+                        accept={{
+                            "image/*": [],
+                        }}
+                        onGetUrl={(responseData) => {
+                            if (responseData) {
+                                onSubmit({ imageUrl: responseData.fileUrl })
+                            }
+                        }}
+                    />
                 </div>
             )}
         </div >

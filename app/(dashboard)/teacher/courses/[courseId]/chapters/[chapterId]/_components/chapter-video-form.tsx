@@ -1,32 +1,17 @@
 "use client";
 import * as z from 'zod';
 import axios from 'axios';
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormMessage
-} from "@/components/ui/form";
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import MuxPlayer from '@mux/mux-player-react'
 
 import React, { useState } from 'react'
-import { ImageIcon, Pencil, PlusCircle, Video } from 'lucide-react';
+import { Pencil, PlusCircle, Video } from 'lucide-react';
 import { useToast } from '@/components/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import { CourseFormProps } from '@/lib/types';
-import { cn } from '@/lib/utils';
-import { Textarea } from '@/components/ui/textarea';
-import Image from 'next/image';
-import { SubmitButton } from '@/components/upload-component/submit-button';
 import { uploadFileAction } from '@/components/upload-component/actions';
 import { useFormState } from 'react-dom';
 import { Chapter, MuxData } from '@prisma/client';
+import { DialogUploader } from '@/components/upload-component/dialog-uploader';
 
 interface ChapterVideoProps {
     initialData: Chapter & { muxData?: MuxData | null };
@@ -114,20 +99,19 @@ export const ChapterVideoForm = ({ initialData, courseId, chapterId }: ChapterVi
                 )
             ) : (
                 <div>
-                    <form action={uploadFormAction}>
-                        <input type="file" id="file" name="file" accept="images/*" />
-                        <SubmitButton />
-                    </form>
-                    {
-                        state?.status && state.status === "error" && (
-                            <p className='text-sm text-red-500'>{state.message}</p>
-                        )
-                    }
-                    {
-                        state?.status && state.status === "success" && (
-                            <p className='text-sm text-green-500'>{state.message}</p>
-                        )
-                    }
+                    <DialogUploader
+                        multiple={false}
+                        maxFileCount={1}
+                        maxSize={1024 * 1024 * 5000}
+                        accept={{
+                            "video/*": [],
+                        }}
+                        onGetUrl={(responseData) => {
+                            if (responseData) {
+                                onSubmit({ videoUrl: responseData.fileUrl}) 
+                            }
+                        }}
+                    />
                 </div>
             )}
             {initialData.videoUrl && !isEditting && (

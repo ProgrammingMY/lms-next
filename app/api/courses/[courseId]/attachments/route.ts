@@ -40,14 +40,12 @@ export async function POST(
       );
     }
 
-    const { url } = await req.json();
-
-    console.log(url);
+    const { name, url } = await req.json();
 
     const attachment = await db.attachment.create({
       data: {
-        fileUrl: url,
-        fileName: url.split("/").pop().split("?")[0],
+        fileUrl: url.split("/").pop().split("?")[0],
+        fileName: name,
         courseId: params.courseId,
       },
     });

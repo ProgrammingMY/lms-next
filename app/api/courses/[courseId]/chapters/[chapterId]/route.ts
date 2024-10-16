@@ -155,6 +155,12 @@ export async function PATCH(
 
     const { isPublished, ...values } = await req.json();
 
+    if (values.videoUrl) {
+      const key = values.videoUrl.split("/").pop().split("?")[0];
+      const url = `https://bucket.programmingmy.com/${key}`;
+      values.videoUrl = url;
+    }
+
     const chapter = await db.chapter.update({
       where: {
         courseId: params.courseId,
