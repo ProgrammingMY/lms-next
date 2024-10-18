@@ -1,15 +1,34 @@
 import { Button } from '@/components/ui/button'
+import { db } from '@/lib/db'
+import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 import React from 'react'
+import { DataTable } from './_components/data-table'
+import { columns } from './_components/columns'
 
-function TeacherCourses() {
+const TeacherCourses = async () => {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return redirect("/");
+  }
+
+  const courses = await db.course.findMany({
+    where: {
+      userId: user.id
+    },
+    orderBy: {
+      createdAt: "desc",
+    }
+  })
+
   return (
     <div className='p-6'>
-      <Link href={"/teacher/create"}>
-        <Button>
-          New Course
-        </Button>
-      </Link>
+      <DataTable columns={columns} data={courses} />
     </div>
   )
 }

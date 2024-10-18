@@ -1,5 +1,6 @@
 "use client";
 
+import { useConfettiStore } from "@/components/hooks/use-confetti-store";
 import { useToast } from "@/components/hooks/use-toast";
 import { ConfirmModal } from "@/components/modals/confirm-modal";
 import { Button } from "@/components/ui/button";
@@ -8,41 +9,41 @@ import { Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-interface ChapterActionProps {
+interface ActionProps {
     disabled: boolean;
     courseId: string;
-    chapterId: string;
     isPublished: boolean;
 }
 
-const ChapterAction = ({
+const Action = ({
     disabled,
     courseId,
-    chapterId,
     isPublished
-}: ChapterActionProps) => {
+}: ActionProps) => {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const { toast } = useToast();
+    const confetti = useConfettiStore();
 
     const onClick = async () => {
         try {
             setIsLoading(true);
 
-            if (isPublished)  {
-                await axios.patch(`/api/courses/${courseId}/chapters/${chapterId}/unpublish`);
+            if (isPublished) {
+                await axios.patch(`/api/courses/${courseId}/unpublish`);
                 toast({
                     title: "Success",
-                    description: "Chapter unpublished successfully.",
+                    description: "Course unpublished successfully.",
                     variant: "default",
                 });
             } else {
-                await axios.patch(`/api/courses/${courseId}/chapters/${chapterId}/publish`);
+                await axios.patch(`/api/courses/${courseId}/publish`);
                 toast({
                     title: "Success",
-                    description: "Chapter published successfully.",
+                    description: "Course published successfully.",
                     variant: "default",
                 });
+                confetti.onOpen();
             }
 
             router.refresh();
@@ -61,14 +62,14 @@ const ChapterAction = ({
     const onDelete = async () => {
         try {
             setIsLoading(true);
-            await axios.delete(`/api/courses/${courseId}/chapters/${chapterId}`);
+            await axios.delete(`/api/courses/${courseId}`);
             toast({
                 title: "Success",
-                description: "Chapter deleted successfully.",
+                description: "Course deleted successfully.",
                 variant: "default",
             });
             router.refresh();
-            router.push(`/teacher/courses/${courseId}`);
+            router.push(`/teacher/courses`);
 
         } catch (error) {
             toast({
@@ -99,4 +100,4 @@ const ChapterAction = ({
     )
 }
 
-export default ChapterAction
+export default Action
