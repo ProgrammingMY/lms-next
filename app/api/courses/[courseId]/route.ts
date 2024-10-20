@@ -124,3 +124,13 @@ export async function PATCH(
     });
   }
 }
+
+export async function GET(req: Request) {
+  try {
+    const data = req.url;
+
+    console.log(data);
+  } catch (error) {
+    console.log("[COURSE ID]", error);
+  }
+}

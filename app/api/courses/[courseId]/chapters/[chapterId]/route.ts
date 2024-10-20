@@ -180,7 +180,13 @@ export async function PATCH(
       });
 
       if (existingVideo) {
-        await video.assets.delete(existingVideo.assetId);
+        // check if the video in mux
+        try {
+          await video.assets.delete(existingVideo.assetId);
+        } catch (error) {
+          console.log("The video is not in mux");
+        }
+
         await db.muxData.delete({
           where: {
             chapterId: params.chapterId,

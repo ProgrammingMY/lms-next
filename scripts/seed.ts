@@ -7,20 +7,23 @@ async function main() {
     await database.category.createMany({
       data: [
         {
-          name: "Business",
+          name: "JavaScript",
         },
-        {
-          name: "Computer Science",
-        },
-        {
-          name: "Economics",
-        },
-        {
-          name: "Mathematics",
-        },
-        {
-          name: "Music",
-        },
+        // {
+        //   name: "Python",
+        // },
+        // {
+        //   name: "React",
+        // },
+        // {
+        //   name: "TypeScript",
+        // },
+        // {
+        //   name: "Angular",
+        // },
+        // {
+        //   name: "Programming",
+        // },
       ],
     });
     console.log("Categories created successfully.");
