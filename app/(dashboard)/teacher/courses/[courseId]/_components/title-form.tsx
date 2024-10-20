@@ -20,9 +20,10 @@ import { useToast } from '@/components/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { CourseFormProps } from '@/lib/types';
 
+// 30 alphanumeric characters and spaces and _ only
 const formSchema = z.object({
-    title: z.string().min(1, {
-        message: "Title is required",
+    title: z.string().min(5).max(30).regex(/^[a-zA-Z0-9\s_]+$/, {
+        message: "Max 30 alphanumeric characters, space and '_' only",
     }),
 });
 
@@ -40,7 +41,7 @@ function TitleForm({ initialData, courseId }: CourseFormProps) {
         defaultValues: initialData,
     });
 
-    const { isSubmitting, isValid } = form.formState;
+    const { isSubmitting } = form.formState;
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         try {
@@ -104,7 +105,7 @@ function TitleForm({ initialData, courseId }: CourseFormProps) {
                             <Button
                                 type='submit'
                                 variant='default'
-                                disabled={!isValid || isSubmitting}
+                                disabled={isSubmitting}
                             >
                                 Save
                             </Button>

@@ -12,13 +12,11 @@ import {
     FormMessage
 } from "@/components/ui/form";
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 
 import React, { useState } from 'react'
 import { Pencil } from 'lucide-react';
 import { useToast } from '@/components/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import { CourseFormProps } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Textarea } from '@/components/ui/textarea';
 
@@ -29,10 +27,10 @@ interface TitleFormProps {
     courseId: string;
 }
 
-
+// 100 alphanumeric characters and spaces and _ only
 const formSchema = z.object({
-    description: z.string().min(1, {
-        message: "Description is required",
+    description: z.string().min(5).max(100).regex(/^[a-zA-Z0-9\s_]+$/, {
+        message: "Max 100 alphanumeric characters, space and '_' only",
     }),
 });
 
@@ -51,7 +49,7 @@ export const DescriptionForm = ({ initialData, courseId }: TitleFormProps) => {
         defaultValues: { description: initialData?.description || "" },
     });
 
-    const { isSubmitting, isValid } = form.formState;
+    const { isSubmitting } = form.formState;
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         try {
@@ -115,7 +113,7 @@ export const DescriptionForm = ({ initialData, courseId }: TitleFormProps) => {
                             <Button
                                 type='submit'
                                 variant='default'
-                                disabled={!isValid || isSubmitting}
+                                disabled={isSubmitting}
                             >
                                 Save
                             </Button>
