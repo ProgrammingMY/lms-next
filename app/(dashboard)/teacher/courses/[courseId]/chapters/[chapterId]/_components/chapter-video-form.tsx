@@ -8,8 +8,6 @@ import React, { useState } from 'react'
 import { Pencil, PlusCircle, Video } from 'lucide-react';
 import { useToast } from '@/components/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import { uploadFileAction } from '@/components/upload-component/actions';
-import { useFormState } from 'react-dom';
 import { Chapter, MuxData } from '@prisma/client';
 import { DialogUploader } from '@/components/upload-component/dialog-uploader';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
@@ -33,7 +31,6 @@ const initialState = {
 
 export const ChapterVideoForm = ({ initialData, courseId, chapterId }: ChapterVideoProps) => {
     const [isEditting, setIsEditting] = useState(false);
-    const [state, uploadFormAction] = useFormState(uploadFileAction, initialState)
     const { toast } = useToast();
     const router = useRouter();
 
