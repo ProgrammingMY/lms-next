@@ -69,8 +69,8 @@ export async function getBill(
       billPriceSetting: 1,
       billPayorInfo: 0, // change this
       billAmount: course.price! * 100,
-      billReturnUrl: `${process.env.NEXT_PUBLIC_APP_URL}/courses/${course.id}`,
-      billCallbackUrl: `${process.env.NEXT_PUBLIC_APP_URL}/courses/${course.id}`, // successful payment
+      billReturnUrl: `${process.env.NEXT_PUBLIC_APP_URL}/courses/${course.id}/purchase`,
+      billCallbackUrl: `${process.env.NEXT_PUBLIC_APP_URL}/courses/${course.id}/purchase`, // successful payment
       billPaymentChannel: 0,
       billExpiryDate: format(addMinutes(new Date(), 10), "dd-MM-yyyy HH:mm:ss"),
     };
