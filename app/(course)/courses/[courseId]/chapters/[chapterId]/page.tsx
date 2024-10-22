@@ -18,7 +18,7 @@ const ChapterIdPage = async ({
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return redirect("/");
+    return redirect("/login");
   }
 
   const {
@@ -36,7 +36,7 @@ const ChapterIdPage = async ({
   });
 
   if (!chapter || !course) {
-    return redirect("/");
+    return redirect("/courses");
   }
 
   const isLocked = !chapter.isFree && !purchase;
@@ -114,9 +114,7 @@ const ChapterIdPage = async ({
               </>
             )}
           </div>
-
         </div>
-
       </div>
     </div>
   )

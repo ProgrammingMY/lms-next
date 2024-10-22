@@ -12,23 +12,18 @@ interface CourseSidebarProps {
         })[]
     };
     progressCount: number;
+    userId: string
 };
 
 export const CourseSidebar = async ({
     course,
     progressCount,
+    userId,
 }: CourseSidebarProps) => {
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-        return redirect("/");
-    }
-
     const purchase = await db.purchase.findUnique({
         where: {
             userId_courseId: {
-                userId: user.id,
+                userId: userId,
                 courseId: course.id,
             }
         }

@@ -21,7 +21,7 @@ const CourseLayout = async ({
     } = await supabase.auth.getUser();
 
     if (!user) {
-        return redirect("/");
+        return redirect("/login");
     }
 
     const course = await db.course.findUnique({
@@ -48,7 +48,7 @@ const CourseLayout = async ({
     });
 
     if (!course) {
-        return redirect("/");
+        return redirect("/courses");
     }
 
     const progressCount = await getProgress(user.id, course.id);
@@ -64,6 +64,7 @@ const CourseLayout = async ({
             </div>
             <div className="hidden md:flex h-full w-80 flex-col fixed inset-y-0 z-50">
                 <CourseSidebar
+                    userId={user.id}
                     course={course}
                     progressCount={progressCount}
                 />
@@ -71,7 +72,6 @@ const CourseLayout = async ({
             </div>
             <main className="md:pl-80 pt-[80px] h-full">
                 {children}
-
             </main>
         </div>
     )

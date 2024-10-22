@@ -1,7 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import Sidebar from "./_components/sidebar";
-import Navbar from "./_components/navbar";
+import Sidebar from "@/components/sidebar/sidebar";
+import Navbar from "@/components/navbar/navbar";
 
 export default async function ProtectedLayout({
     children,
@@ -14,9 +14,9 @@ export default async function ProtectedLayout({
         data: { user },
     } = await supabase.auth.getUser();
 
-    // if (!user) {
-    //     return redirect("/login");
-    // }
+    if (!user) {
+        return redirect("/login");
+    }
 
     return (
         <div className="h-full">
@@ -30,5 +30,6 @@ export default async function ProtectedLayout({
                 {children}
             </main>
 
-        </div>);
+        </div>
+    );
 }
