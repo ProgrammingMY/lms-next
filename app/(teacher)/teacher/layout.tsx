@@ -13,6 +13,10 @@ const TeacherLayout = async ({
         data: { user },
     } = await supabase.auth.getUser();
 
+    if (!user) {
+        return redirect("/login");
+    }
+
     if (!isTeacher(user?.id)) {
         return redirect("/user");
     }
