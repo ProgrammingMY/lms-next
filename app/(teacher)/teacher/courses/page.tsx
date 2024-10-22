@@ -14,7 +14,7 @@ const TeacherCourses = async () => {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return redirect("/");
+    return redirect("/login");
   }
 
   const courses = await db.course.findMany({

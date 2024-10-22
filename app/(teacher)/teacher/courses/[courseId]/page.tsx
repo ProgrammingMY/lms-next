@@ -24,7 +24,7 @@ async function CourseIdPage(
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return redirect("/");
+    return redirect("/login");
   }
 
   const course = await db.course.findUnique({
@@ -53,7 +53,7 @@ async function CourseIdPage(
   });
 
   if (!course) {
-    return redirect("/");
+    return redirect("/teacher/courses");
   }
 
   const requiredField = [

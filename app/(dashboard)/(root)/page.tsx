@@ -13,7 +13,7 @@ async function Dashboard() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return redirect("/");
+    return redirect("/login");
   }
 
   const {

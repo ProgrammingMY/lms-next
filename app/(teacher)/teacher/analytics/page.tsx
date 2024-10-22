@@ -12,7 +12,7 @@ async function Analytics() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return redirect("/");
+    return redirect("/login");
   }
 
 

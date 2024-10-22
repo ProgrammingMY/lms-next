@@ -25,7 +25,7 @@ const ChapterIdPage = async (
     } = await supabase.auth.getUser();
 
     if (!user) {
-        return redirect("/");
+        return redirect("/login");
     };
 
     const chapter = await db.chapter.findUnique({
@@ -39,7 +39,7 @@ const ChapterIdPage = async (
     });
 
     if (!chapter) {
-        return redirect("/");
+        return redirect("/courses");
     }
 
     const requiredField = [
