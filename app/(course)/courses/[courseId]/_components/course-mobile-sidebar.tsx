@@ -16,9 +16,11 @@ interface CourseMobileSidebarProps {
         })[]
     };
     progressCount: number;
+    userId: string;
 };
 
 export const CourseMobileSidebar = ({
+    userId,
     course,
     progressCount,
 }: CourseMobileSidebarProps) => {
@@ -29,6 +31,7 @@ export const CourseMobileSidebar = ({
             </SheetTrigger>
             <SheetContent side={"left"} className="p-0 bg-white w-72">
                 <CourseSidebar
+                    userId={userId}
                     course={course}
                     progressCount={progressCount}
                 />

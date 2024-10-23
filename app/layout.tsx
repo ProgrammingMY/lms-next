@@ -20,10 +20,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <ConfettiProvider />
+        <Toaster />
         <main>
           {children}
         </main>
-        <Toaster />
       </body>
     </html>
   );

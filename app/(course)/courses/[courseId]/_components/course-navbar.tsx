@@ -9,15 +9,18 @@ interface CourseNavbarProps {
         })[];
     };
     progressCount: number;
+    userId: string;
 }
 
 export const CourseNavbar = ({
+    userId,
     course,
     progressCount,
 }: CourseNavbarProps) => {
     return (
         <div className="p-4 border-b h-full flex items-center bg-white shadow-sm">
             <CourseMobileSidebar
+                userId={userId}
                 course={course}
                 progressCount={progressCount}
             />

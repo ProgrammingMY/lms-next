@@ -15,7 +15,6 @@ async function Analytics() {
     return redirect("/login");
   }
 
-
   const {
     data,
     totalRevenue,
