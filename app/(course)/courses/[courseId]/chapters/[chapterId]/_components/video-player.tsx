@@ -50,11 +50,10 @@ export const VideoPlayer = ({
                 description: "Progress Updated",
                 variant: "default",
             })
-            router.refresh();
-
             if (nextChapterId) {
                 router.push(`/courses/${courseId}/chapters/${nextChapterId}`);
             }
+            router.refresh();
 
         }
         catch (error) {
