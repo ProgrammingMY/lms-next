@@ -90,10 +90,16 @@ export const AttachmentForm = ({ initialData, courseId }: AttachmentFormProps) =
                         maxSize={1024 * 1024 * 10}
                         accept={{
                             "image/*": [],
-                            "pdf/*": [],
                             "text/*": [],
-                            "video/*": [],
                             "audio/*": [],
+                            "application/pdf": [],
+                            "application/json": [],
+                            "application/vnd.openxmlformats-officedocument.presentationml.presentation": [],
+                            "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [],
+                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [],
+                            "application/x-zip-compressed": [],
+                            "application/zip": [],
+
                         }}
                         onGetUrl={(responseData) => {
                             if (responseData) {

@@ -1,16 +1,13 @@
 "use server";
 
-import { createClient } from "@/utils/supabase/server";
-import {
-  GetObjectCommand,
-  ListObjectsV2CommandInput,
-  S3Client,
-} from "@aws-sdk/client-s3";
+import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { db } from "@/lib/db";
-import { MessageCircle } from "lucide-react";
-import { Attachment } from "@prisma/client";
-import { stat } from "fs";
+
+interface returnDownloadProps {
+  status: string;
+  message: string;
+  data: string;
+}
 
 const s3Client = new S3Client({
   region: "auto",
@@ -23,41 +20,16 @@ const s3Client = new S3Client({
 });
 
 export const getDownloadURL = async (
-  tableName: "attachments" | "image",
-  id: string
-) => {
-  const supabase = createClient();
-
-  const { data: user } = await supabase.auth.getUser();
-
-  if (!user) {
-    return {
-      status: "401",
-      message: "Unathorized",
-      data: [],
-    };
-  }
-
+  fileUrl: string
+): Promise<returnDownloadProps> => {
   try {
-    const data = await db.attachment.findMany({
-      where: {
-        courseId: id,
-      },
+    const params = new GetObjectCommand({
+      Bucket: process.env.CF_BUCKET_NAME as string,
+      Key: fileUrl,
     });
 
-    const signedURL: string[] = [];
-
-    data.map(async (item: Attachment) => {
-      const params = new GetObjectCommand({
-        Bucket: process.env.CF_BUCKET_NAME as string,
-        Key: item.fileName,
-      });
-
-      signedURL.push(
-        await getSignedUrl(s3Client, params, {
-          expiresIn: 60, // 60 seconds
-        })
-      );
+    const signedURL = await getSignedUrl(s3Client, params, {
+      expiresIn: 60, // 60 seconds
     });
 
     return {
@@ -68,8 +40,8 @@ export const getDownloadURL = async (
   } catch (error) {
     return {
       status: "404",
-      message: error,
-      data: [],
+      message: "Something went wrong",
+      data: "",
     };
   }
 };

@@ -1,5 +1,6 @@
 "use server";
 
+import { isTeacher } from "@/lib/teacher";
 import { createClient } from "@/utils/supabase/server";
 import {
   PutObjectCommand,
@@ -35,48 +36,6 @@ const s3Client = new S3Client({
   forcePathStyle: true,
 });
 
-async function uploadFileToS3(file: File, filename: string) {
-  const buffer = Buffer.from(await file.arrayBuffer());
-  const params = {
-    Bucket: process.env.CF_BUCKET_NAME as string,
-    Key: `${filename}`,
-    Body: buffer,
-    ContentType: file.type,
-  };
-
-  const command = new PutObjectCommand(params);
-  try {
-    const response = await s3Client.send(command);
-    return response;
-  } catch (error) {
-    console.log(error);
-    throw new Error("Error uploading file to S3");
-  }
-}
-
-export const uploadFileAction = async (prevState: any, formData: FormData) => {
-  try {
-    const files = formData.getAll("file");
-    const uploadedFiles = [];
-
-    if (!files) {
-      return { status: "error", message: "No attachment provided" };
-    }
-
-    for (const file of files as File[]) {
-      const response = await uploadFileToS3(file, file.name);
-      if (response.$metadata.httpStatusCode !== 200) {
-        continue;
-      }
-
-      uploadedFiles.push(file.name);
-    }
-    return { status: "success", message: "File uploaded successfully" };
-  } catch (error) {
-    return { status: "error", message: "Something went wrong" };
-  }
-};
-
 export async function getURL(formData: FormData) {
   // accepted types
 
@@ -87,11 +46,11 @@ export async function getURL(formData: FormData) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
+  if (!user || !isTeacher(user?.id)) {
     return JSON.stringify({
       status: "error",
       data: [],
-      message: "Something went wrong",
+      message: "Not authorized",
     });
   }
 

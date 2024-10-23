@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import Image from "next/image"
 import Dropzone, { type FileRejection, type DropzoneProps } from 'react-dropzone'
 
-import { getURL, signedURLParams } from './actions';
+import { getURL } from './upload-actions';
 import { X, File, UploadIcon } from 'lucide-react';
 
 import { useToast } from '../hooks/use-toast';

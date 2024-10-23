@@ -8,6 +8,8 @@ import { Separator } from "@/components/ui/separator";
 import { Preview } from "@/components/preview";
 import { File } from "lucide-react";
 import { CourseProgressButton } from "./_components/course-progress-button";
+import { CourseAttachments } from "./_components/course-attachments";
+
 
 const ChapterIdPage = async ({
   params,
@@ -98,19 +100,9 @@ const ChapterIdPage = async ({
             {!!attachments.length && (
               <>
                 <Separator />
-                <div className="p-4">
-                  {attachments.map((attachment) => (
-                    <a
-                      href={attachment.fileUrl}
-                      key={attachment.id}
-                      target="_blank"
-                      className="flex items-center p-3 w-full bg-sky-200 border text-sky-700 rounded-md hover:underline"
-                    >
-                      <File />
-                      <p className="line-clamp-1">{attachment.fileName}</p>
-                    </a>
-                  ))}
-                </div>
+                <CourseAttachments
+                  attachments={attachments}
+                />
               </>
             )}
           </div>
