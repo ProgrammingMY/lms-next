@@ -14,7 +14,6 @@ import SignOut from '@/components/actions/signout';
 import getUser from '../actions/getUser';
 
 const SignOutButton = () => {
-    const [user, setUser] = useState("test");
 
     // useEffect(() => {
     //     const fetchUser = async () => {
@@ -25,30 +24,28 @@ const SignOutButton = () => {
     //     fetchUser();
     // }, [])
 
+    const onSignOut = async () => {
+        try {
+            await SignOut();
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
 
 
     return (
         <DropdownMenu>
-
             <DropdownMenuTrigger>
                 <Avatar>
                     <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
                 </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-                <DropdownMenuLabel>
-                    <div className="text-foreground">
-                        {user}
-                    </div>
-                </DropdownMenuLabel>
                 <DropdownMenuItem>Profile</DropdownMenuItem>
                 <DropdownMenuItem>Settings</DropdownMenuItem>
-                <DropdownMenuItem>
-                    <form action={SignOut}>
-                        <button className="py-2 px-4 rounded-md no-underline bg-btn-background hover:bg-btn-background-hover">
-                            Logout
-                        </button>
-                    </form>
+                <DropdownMenuItem onClick={onSignOut}>
+                    Logout
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
