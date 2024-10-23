@@ -13,7 +13,7 @@ import {
 import SignOut from '@/components/actions/signout';
 import getUser from '../actions/getUser';
 
-const SignOutButton = async () => {
+const SignOutButton = () => {
     const [user, setUser] = useState("test");
 
     // useEffect(() => {
@@ -25,7 +25,7 @@ const SignOutButton = async () => {
     //     fetchUser();
     // }, [])
 
-    
+
 
     return (
         <DropdownMenu>

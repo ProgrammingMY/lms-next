@@ -8,7 +8,7 @@ import { Button } from './ui/button';
 import { LogOut } from 'lucide-react';
 import { SearchInput } from './search-input';
 
-const NavbarRoutes = async ({
+const NavbarRoutes = ({
     isTeacher = false
 }: {
     isTeacher?: boolean
