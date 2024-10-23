@@ -20,16 +20,7 @@ import { useToast } from '@/components/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { CourseFormProps } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { Textarea } from '@/components/ui/textarea';
 import { formatPrice } from '@/lib/format';
-
-interface TitleFormProps {
-    initialData: {
-        price: string | null;
-    };
-    courseId: string;
-}
-
 
 const formSchema = z.object({
     price: z.coerce.number(),

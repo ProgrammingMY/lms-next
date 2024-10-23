@@ -12,24 +12,15 @@ import {
     FormMessage
 } from "@/components/ui/form";
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 
 import React, { useState } from 'react'
 import { Pencil } from 'lucide-react';
 import { useToast } from '@/components/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import { ChapterFormProps, CourseFormProps } from '@/lib/types';
+import { ChapterFormProps } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { Textarea } from '@/components/ui/textarea';
 import { Editor } from '@/components/editor';
 import { Preview } from '@/components/preview';
-
-interface TitleFormProps {
-    initialData: {
-        description: string | null;
-    };
-    courseId: string;
-}
 
 
 const formSchema = z.object({
