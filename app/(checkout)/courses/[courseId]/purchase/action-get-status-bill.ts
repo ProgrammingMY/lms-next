@@ -6,7 +6,6 @@ import axios from "axios";
 
 export async function getStatusBill(
   courseId: string,
-  chapterId: string,
   billCode: string | null,
   transactionId: string | null
 ): Promise<{ status: "200" | "400" | "500"; message: string }> {
@@ -21,12 +20,37 @@ export async function getStatusBill(
       return { status: "400", message: "User not found" };
     }
 
-
     if (!billCode || !transactionId) {
       return {
         status: "400",
         message: "Bill code and transaction id are required",
       };
+    }
+
+    let purchase = await db.purchase.findUnique({
+      where: {
+        userId_courseId: {
+          userId: user.id,
+          courseId: courseId
+        }
+      }
+    });
+
+    if (purchase) {
+      return { status: "400", message: "Already purchased" };
+    }
+
+    const billCodeFromDb = await db.stripeCustomer.findUnique({
+      where: {
+        userId_courseId: {
+          userId: user.id,
+          courseId: courseId,
+        },
+      },
+    });
+
+    if (!billCodeFromDb || billCodeFromDb.billCode !== billCode) {
+      return { status: "400", message: "Bill code is invalid" };
     }
 
     const result = await axios.post(
@@ -47,18 +71,21 @@ export async function getStatusBill(
     const status = result.data[0].billpaymentStatus;
 
     if (status === "1") {
-      const purchase = await db.purchase.create({
+      purchase = await db.purchase.create({
         data: {
           courseId: courseId,
           userId: user.id,
-        }
+        },
       });
 
-      return { status: "200", message: "success" };
+      return { status: "200", message: "Purchase success" };
     }
 
-    // purchase failed
-    return { status: "400", message: "Purchase failed" };
+    if (status === "3") {
+      return { status: "200", message: "Purchase failed" };
+    }
+
+    return { status: "400", message: "Purchase pending" };
   } catch (error) {
     console.log(error);
     return { status: "500", message: "Internal server error" };

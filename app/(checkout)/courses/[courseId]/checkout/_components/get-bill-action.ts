@@ -43,24 +43,6 @@ export async function getBill(
       return { status: "404", message: "Course not found" };
     }
 
-    let toyyibCustomer = await db.stripeCustomer.findUnique({
-      where: {
-        userId: user.id,
-      },
-      select: {
-        stripeCustomerId: true,
-      },
-    });
-
-    if (!toyyibCustomer) {
-      toyyibCustomer = await db.stripeCustomer.create({
-        data: {
-          userId: user.id,
-          stripeCustomerId: user.email!,
-        },
-      });
-    }
-
     const billDetails = {
       userSecretKey: process.env.TOYYIB_SECRET_KEY!,
       categoryCode: process.env.TOYYIB_CATEGORY_ID!,
@@ -87,6 +69,23 @@ export async function getBill(
         },
       }
     );
+
+    let toyyibCustomer = await db.stripeCustomer.upsert({
+      where: {
+        userId_courseId: {
+          userId: user.id,
+          courseId: course.id,
+        },
+      },
+      update: {
+        billCode: bill.data[0].BillCode,
+      },
+      create: {
+        userId: user.id,
+        courseId: course.id,
+        billCode: bill.data[0].BillCode,
+      },
+    });
 
     const url = `${process.env.TOYYIB_URL}/${bill.data[0].BillCode}`;
 

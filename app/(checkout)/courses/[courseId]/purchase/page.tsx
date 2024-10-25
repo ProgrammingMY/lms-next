@@ -2,6 +2,17 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { getStatusBill } from "./action-get-status-bill";
 import { useEffect, useState } from "react";
+import { Banner } from "@/components/banner";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card"
+import { Button } from "@/components/ui/button";
+import { CreditCard } from "lucide-react";
 
 const PurchaseReturn = ({
     params
@@ -16,7 +27,7 @@ const PurchaseReturn = ({
 
     useEffect(() => {
         const getStatus = async () => {
-            const data = await getStatusBill(params.courseId, params.chapterId, billCode, transactionId);
+            const data = await getStatusBill(params.courseId, billCode, transactionId);
             setStatus(data);
         }
 
@@ -29,9 +40,14 @@ const PurchaseReturn = ({
 
 
     return (
-        <div>
-            {status.message}
-        </div>
+        <>
+            {status.status === "400" && status.message === "Already purchased" && (
+                <Banner
+                    label="You have already purchased this course"
+                    variant={"success"}
+                />
+            )}
+        </>
     )
 }
 

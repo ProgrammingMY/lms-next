@@ -2,8 +2,8 @@ import { getProgress } from "@/actions/get-progress";
 import { db } from "@/lib/db";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import { CourseSidebar } from "./_components/course-sidebar";
-import { CourseNavbar } from "./_components/course-navbar";
+import { CourseSidebar } from "@/components/course-navbar/course-sidebar";
+import { CourseNavbar } from "@/components/course-navbar/course-navbar";
 
 const CourseLayout = async ({
     children,

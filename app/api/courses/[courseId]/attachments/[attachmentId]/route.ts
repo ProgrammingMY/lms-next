@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { isTeacher } from "@/lib/teacher";
 import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
 
