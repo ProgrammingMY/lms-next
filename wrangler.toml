@@ -1,0 +1,9 @@
+name = "kelas-tech-app"
+compatibility_date = "2024-07-29"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = ".vercel/output/static"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "kelas-tech-db"
+database_id = "ae53adb8-7389-47dc-91d8-fdb8e4f451c6"

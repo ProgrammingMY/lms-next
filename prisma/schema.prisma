@@ -5,21 +5,21 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model Course {
   id          String  @id @default(uuid())
   userId      String
-  title       String  @db.Text
-  description String? @db.Text
-  imageUrl    String? @db.Text
+  title       String
+  description String?
+  imageUrl    String?
   price       Float?
   isPublished Boolean @default(false)
 
@@ -45,7 +45,7 @@ model Category {
 model Attachment {
   id        String   @id @default(uuid())
   courseId  String
-  fileUrl   String   @db.Text
+  fileUrl   String
   fileName  String
   course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
@@ -57,8 +57,8 @@ model Attachment {
 model Chapter {
   id          String  @id @default(uuid())
   title       String
-  description String? @db.Text
-  videoUrl    String? @db.Text
+  description String?
+  videoUrl    String?
   position    Int
   isPublished Boolean @default(false)
   isFree      Boolean @default(false)

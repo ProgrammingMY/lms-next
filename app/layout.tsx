@@ -6,6 +6,8 @@ import { ConfettiProvider } from "@/components/providers/confetti-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
+export const runtime = "edge";
+
 export const metadata: Metadata = {
   title: "Kelas Tech",
   description: "Belajar Tech dengan Mudah!",

@@ -1,11 +1,7 @@
 import { PrismaClient } from "@prisma/client";
+import { PrismaD1 } from "@prisma/adapter-d1";
 
-declare global {
-  // allow global `var` declarations
-  // eslint-disable-next-line no-var
-  var prisma: PrismaClient | undefined;
-}
-
-export const db = globalThis.prisma || new PrismaClient();
-
-if (process.env.NODE_ENV !== "production") globalThis.prisma = db;
+export const db = (env: Env) => {
+  const adapter = new PrismaD1(env.DB);
+  return new PrismaClient({ adapter });
+};
